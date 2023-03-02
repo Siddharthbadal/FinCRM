@@ -1,0 +1,41 @@
+{% extends "core/base.html" %} 
+
+{% block title %} 
+
+{% endblock %} 
+
+
+
+{% block content %} 
+    <div class="py-6 px-6">
+        <h1 class="text-xl mb-5 text-center center m-auto text-blue-700 font-bold">Clients</h1>
+        
+        <a href="{% url 'add_client' %}" class="inline-block py-4 px-6 bg-blue-500 rounded-xl text-white">Add Client</a>
+        <div class='flex justtify-between mt-5'>
+            <p class=' py-4 px-2 bg-gray-400 font-semibold w-full'>Name</p>
+            <p class=' py-4 px-2 bg-gray-400 font-semibold w-full'>Email</p>
+            
+
+        </div>
+
+        {% for client in clients %} 
+            <div class='flex justtify-between mt-2'>
+                <p class="py-2 px-2 w-full font-bold {% cycle 'bg-gray-200' '' %}">   
+                    <a href="{% url 'clients_detail' client.id %}">
+                    
+                    {{client.name | title}} </a>
+                </p>
+
+                <p class="py-2 px-2 w-full {% cycle 'bg-gray-200' '' %}">   
+                    
+                    
+                    {{client.email}} 
+                </p>
+               
+            </div>
+            {% empty %}
+            <p class='mt-10 text-center text-lg'> No clients avilable!</p>
+        {% endfor %}
+    </div>  
+
+{% endblock %}

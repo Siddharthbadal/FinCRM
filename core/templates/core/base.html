@@ -1,0 +1,70 @@
+{% load static %}
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel='stylesheet' href="{% static 'main.min.css' %}"/>
+  
+  <title>
+    {% block title %} 
+    FinCRM
+    {% endblock title %}
+  </title>
+</head>
+
+<body>
+    <nav class="py-6 px-6 flex justify-between bg-blue-900">
+        <a href="{% url 'index' %}" class="text-white">FinCRM</a>
+        <div class="space-x-4">
+            {% comment %} <a href="{% url 'about' %}" class="text-white">About</a> {% endcomment %}
+            {% if request.user.is_authenticated %}
+            
+            <a href="{% url 'leads:list' %}" class="py-4 px-6 bg-blue-500 rounded-xl text-white">Leads</a>
+            <a href="{% url 'clients_list' %}" class="py-4 px-6 bg-blue-500 rounded-xl text-white">Clients</a>
+            <a href="{% url 'dashboard:index' %}" class="py-4 px-6 bg-blue-500 rounded-xl text-white">Dashboard</a>
+            <a href="{% url 'myaccount' %}" class="py-4 px-6 bg-blue-700 rounded-xl text-white">MyAccount</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="py-4 px-6 bg-blue-600 rounded-xl text-white">login</a>
+            <a href="{% url 'signup' %}" class="py-4 px-6 bg-blue-500 rounded-xl text-white">SignUp</a>
+            {% endif %}
+            
+        </div>
+
+    </nav>
+
+    {% if messages %}
+      <div class='py-6 px-6 w-1/2'>
+        {% for message in messages %}
+          <div class="py-4 px-4 bg-blue-800 rounded-xl text-center font-semibold text-xl text-white">
+            {{ message }}
+          </div>
+
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+
+    {% block content %} 
+
+    {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+  <footer class="py-8 text-center bg-blue-500">
+    <p class='text-xs text-white'>Copyright (c) 2023 FinCRM</p>
+    <p class='text-xs text-white'>Built by <a href="https://siddharthbadal.github.io/projects/">Siddharth</a></p>
+
+  </footer>
+</body>
+</html>
