@@ -13,7 +13,11 @@ User can also convert leads into client. and track the progress by commenting un
 * Email Settings
 
 
-
+Dashboard
 ![img](https://github.com/Siddharthbadal/fincrm/blob/main/images/dashboard.png)
 
+Leads Page
 ![img](https://github.com/Siddharthbadal/fincrm/blob/main/images/leads.png)
+
+Details Page:
+![img](https://github.com/Siddharthbadal/fincrm/blob/main/images/lead-details.png)

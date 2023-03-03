@@ -2,17 +2,17 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Client
-from .forms import AddClientForm
+from .forms import AddClientForm, AddCommentForm
 from team.models import Team
 
 @login_required 
 def add_client(request):
-    team = Team.objects.filter(created_by=request.user)[0]
+    team = Team.objects.filter(created_by=request.user).first()
     if request.method == 'POST':   
         form = AddClientForm(request.POST)
 
         if form.is_valid():
-            team = Team.objects.filter(created_by=request.user)[0]
+            team = Team.objects.filter(created_by=request.user).first()
             client = form.save(commit=False)
             client.created_by= request.user
             client.team = team
@@ -38,7 +38,24 @@ def clients_list(request):
 @login_required
 def clients_detail(request, pk):
     client = get_object_or_404(Client, created_by=request.user, pk=pk)
-    return render(request, 'client/clients_detail.html',{'client':client})
+    team = Team.objects.filter(created_by=request.user).first()
+
+    if request.method == 'POST':
+        form = AddCommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.team = team 
+            comment.created_by= request.user
+            comment.client = client
+            
+            comment.save()
+
+            return redirect("clients_detail",pk=pk)
+    else:
+        form= AddCommentForm()
+
+    return render(request, 'client/clients_detail.html',{'client':client, 'form':form})
 
 
 @login_required
@@ -65,3 +82,6 @@ def edit_client(request, pk):
 
     return render(request, 'client/edit_client.html',
     {'form':form})
+
+
+

@@ -36,7 +36,7 @@ class LeadCreateView(CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        team = Team.objects.filter(created_by=self.request.user)[0]
+        team = Team.objects.filter(created_by=self.request.user).first()
         context['team'] = team 
         context['title'] = 'Add Lead'
         return context
@@ -45,7 +45,7 @@ class LeadCreateView(CreateView):
         return reverse_lazy('leads:list')
     
     def form_valid(self, form):
-        team = Team.objects.filter(created_by=self.request.user)[0]
+        team = Team.objects.filter(created_by=self.request.user).first()
 
         self.object = form.save(commit=False)
         self.object.created_by = self.request.user
@@ -104,7 +104,7 @@ class AddCommentView(View):
         
         form = AddCommentForm(request.POST)
         if form.is_valid():
-            team = Team.objects.filter(created_by=self.request.user)[0]
+            team = Team.objects.filter(created_by=self.request.user).first()
             comment = form.save(commit=False)
             comment.team =team 
             comment.created_by=request.user 
@@ -142,7 +142,7 @@ class ConvertToClient(View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
         lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
-        team = Team.objects.filter(created_by=request.user)[0]
+        team = Team.objects.filter(created_by=request.user).first()
 
         client = Client.objects.create(name=lead.name, email=lead.email, description=lead.description, created_by=request.user, team=team)
 
