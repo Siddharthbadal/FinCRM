@@ -8,6 +8,8 @@ urlpatterns = [
     path('<int:pk>/delete/', views.delete_client, name='delete_client'),
     path('<int:pk>/edit/', views.edit_client, name='edit_client'),
     path('add/', views.add_client, name='add_client'),
-    path('<int:pk>/add_comment/',views.clients_detail, name='client_add_comment' )
+    path('<int:pk>/add_comment/',views.clients_detail, name='client_add_comment' ),
+    path('<int:pk>/add-file', views.clients_add_file, name='clients_add_file'),
+    path('export/', views.client_export, name='client_export'),
     
 ]

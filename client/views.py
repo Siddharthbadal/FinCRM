@@ -1,8 +1,10 @@
+import csv
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from .models import Client
-from .forms import AddClientForm, AddCommentForm
+from .forms import AddClientForm, AddCommentForm, AddClientFile
 from team.models import Team
 
 @login_required 
@@ -55,7 +57,7 @@ def clients_detail(request, pk):
     else:
         form= AddCommentForm()
 
-    return render(request, 'client/clients_detail.html',{'client':client, 'form':form})
+    return render(request, 'client/clients_detail.html',{'client':client, 'form':form, 'fileform':AddClientFile()})
 
 
 @login_required
@@ -85,3 +87,37 @@ def edit_client(request, pk):
 
 
 
+
+@login_required
+def clients_add_file(request, pk):
+    client = get_object_or_404(Client, created_by=request.user, pk=pk)
+    team = Team.objects.filter(created_by=request.user).first()
+    if request.method == 'POST':
+        form = AddClientFile(request.POST, request.FILES)
+
+        if form.is_valid():
+            team = Team.objects.filter(created_by=request.user).first()
+            file = form.save(commit=False)
+            file.team = team 
+
+            file.lead_id = pk 
+            file.created_by = request.user
+            file.save()
+            return redirect('clients_detail',pk=pk)
+    return redirect('clients_detail',pk=pk)
+    
+
+@login_required
+def client_export(request):
+     clients = Client.objects.filter(created_by=request.user)
+
+     response = HttpResponse(
+         content_type='text/csv',
+         headers={'Content-Disposition':"attachment; filename='clients.csv'"}
+     )
+     writer = csv.writer(response)
+     writer.writerow((['Client','Description','Created At','Created_By']))
+     for client in clients:
+         writer.writerow([client.name, client.description, client.created_at, client.created_by])
+
+     return response 

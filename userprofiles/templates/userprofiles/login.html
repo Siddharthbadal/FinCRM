@@ -6,7 +6,8 @@
 
 
 {% block content %}
-    <h1 class="text-lg center">SignUp</h1>
+    <h1 class="text-lg center">SignIn</h1>
+    {% if request.user.is_authenticated %}
     <form method="POST" action=".">
         {% csrf_token %}
 
@@ -14,4 +15,5 @@
 
         <button class="py-4 px-8 bg-blue-800 text-white m-5 rounded-xl">Submit</button>
     </form>
+    {% endif %}
 {% endblock content %}

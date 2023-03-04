@@ -4,10 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView, View
 from django.urls import reverse_lazy
-
+from django.http import HttpResponse
+import csv 
 from .models import Lead 
 from team.models import Team
-from .forms import AddLeadForm, AddCommentForm
+from .forms import AddLeadForm, AddCommentForm, AddLeadFile
 from client.models import Client
 
 
@@ -23,7 +24,8 @@ class LeadListView(ListView):
         queryset = queryset.filter(created_by=self.request.user, converted_to_client=False)
 
         return queryset 
-
+    
+    
 
 
 class LeadCreateView(CreateView):
@@ -65,8 +67,10 @@ class LeadDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = AddCommentForm
+        context['form'] = AddCommentForm()
+        context['fileform'] = AddLeadFile()
         return context
+    
 
     def get_queryset(self):
         queryset = super(LeadDetailView, self).get_queryset()
@@ -151,9 +155,35 @@ class ConvertToClient(View):
         messages.success(request, "Lead converted in to a client!")
         return redirect('leads:list')
 
+class AddFileView(View):
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+
+        form = AddLeadFile(request.POST, request.FILES)
+        if form.is_valid():
+            team = Team.objects.filter(created_by=request.user).first()
+            file = form.save(commit=False)
+            file.team = team 
+
+            file.lead_id = pk 
+            file.created_by = request.user
+            file.save()
+        return redirect('leads:detail',pk=pk)
 
 
+def client_export(request):
+     leads = Lead.objects.filter(created_by=request.user)
 
+     response = HttpResponse(
+         content_type='text/csv',
+         headers={'Content-Disposition':"attachment; filename='clients.csv'"}
+     )
+     writer = csv.writer(response)
+     writer.writerow((['Lead','Description','Created At','Created_By']))
+     for lead in leads:
+         writer.writerow([lead.name, lead.description, lead.created_at, lead.created_by])
+
+     return response 
 
 
 """

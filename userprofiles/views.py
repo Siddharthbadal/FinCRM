@@ -7,11 +7,14 @@ from team.models import Team
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
+        
         if form.is_valid():
             user = form.save()
+            
             UserProfile.objects.create(user=user)
+            
             team = Team.objects.create(name='The team name', created_by=request.user)
-            team.member.add(request.user)
+            team.members.add(request.user)
             team.save()
             return redirect("login")
     else:

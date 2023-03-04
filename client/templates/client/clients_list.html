@@ -10,7 +10,8 @@
     <div class="py-6 px-6">
         <h1 class="text-xl mb-5 text-center center m-auto text-blue-700 font-bold">Clients</h1>
         
-        <a href="{% url 'add_client' %}" class="inline-block py-4 px-6 bg-blue-500 rounded-xl text-white">Add Client</a>
+        <small><a href="{% url 'add_client' %}" class="inline-block py-4 px-6 bg-blue-500 rounded-xl text-white font-semibold">Add Client</a></small>
+        <small><a href="{% url 'client_export' %}" class="inline-block py-4 px-6 bg-blue-500 rounded-xl text-white font-semibold">Export Data</a></small>
         <div class='flex justtify-between mt-5'>
             <p class=' py-4 px-2 bg-gray-400 font-semibold w-full'>Name</p>
             <p class=' py-4 px-2 bg-gray-400 font-semibold w-full'>Email</p>
